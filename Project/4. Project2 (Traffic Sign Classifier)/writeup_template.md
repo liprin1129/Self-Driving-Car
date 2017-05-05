@@ -19,6 +19,8 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
+[SummaryOfDataSet]: ./Images/WirteUp/Number_of_Samples.png "Number of Samples in each class"
+
 [image1]: ./examples/visualization.jpg "Visualization"
 [image2]: ./examples/grayscale.jpg "Grayscaling"
 [image3]: ./examples/random_noise.jpg "Random Noise"
@@ -32,26 +34,26 @@ The goals / steps of this project are the following:
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
 ---
-###Writeup / README
+## README
 
-####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
+I implemented Convolutional Neural Network on German Traffic Sign data set to generalise German traffic signs images and to predict of that. Here is a link to my [project code](https://github.com/liprin1129/Self-Driving-Car/blob/master/Project/4.%20Project2%20(Traffic%20Sign%20Classifier)/Traffic_Sign_Classifier.ipynb)
 
-You're reading it! and here is a link to my [project code](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
+## Data Set Summary & Exploration
 
-###Data Set Summary & Exploration
+### 1. German Traffic Sign dataset:
 
-####1. Provide a basic summary of the data set. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
+German Traffic Sign dataset have 43 classes/labels of traffic signs consisted of 34799 images for training, 3310 images for validation, and 12630 images for testing the network. I used the pandas library to calculate summary statistics of the traffic signs data set:
 
-I used the pandas library to calculate summary statistics of the traffic
-signs data set:
+* The size of training set is 34799 with the 32 pixels for width and 32 pixels for height. Because the training set are colour image, an colour image is comprised of 3 channels of 32x32 pixels for red, green, and blue colour respectively. Therefore, training set has the 4D shape of (34799, 32, 32, 3).
+* The size of the validation set is 3310, and it was used for generalisation to have high performance. This is also comprised of colour images, therefore the shape of it is (3310, 32, 32, 3).
+* The size of test set is 12630 colour images. This also have the same width and height as the training images and validation images, and the shape of the test set is (12630, 32, 32, 3) accordingly.
+* There are 43 classes in the data sets, and each class contains different number of images. The chart below is the summary of the number of images contained in each unique class of training dataset.
 
-* The size of training set is ?
-* The size of the validation set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
+![alt text][SummaryOfDataSet]
 
-####2. Include an exploratory visualization of the dataset.
+As we see the above bar chart, the number of images in each class are biased. As a result, if we train the medel using the dataset, it may try to predict the favor of the one side. Therefore it is necessary to balance the number of sample images in each class. At the next session, the method of how to balance those will be discussed.
+
+### 2. Include an exploratory visualization of the dataset.
 
 Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
 
