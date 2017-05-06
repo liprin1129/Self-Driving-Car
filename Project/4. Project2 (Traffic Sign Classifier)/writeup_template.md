@@ -19,8 +19,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[SummaryOfDataSet]: ./Images/WirteUp/Number_of_Samples.png "Number of Samples in each class"
-
+[SummaryOfDataSet]: ./Images/WriteUp/Number_of_Samples.png "Number of Samples in each class"
 [image1]: ./examples/visualization.jpg "Visualization"
 [image2]: ./examples/grayscale.jpg "Grayscaling"
 [image3]: ./examples/random_noise.jpg "Random Noise"
@@ -40,7 +39,7 @@ I implemented Convolutional Neural Network on German Traffic Sign data set to ge
 
 ## Data Set Summary & Exploration
 
-### 1. German Traffic Sign dataset:
+### 1. German Traffic Sign Dataset:
 
 German Traffic Sign dataset have 43 classes/labels of traffic signs consisted of 34799 images for training, 3310 images for validation, and 12630 images for testing the network. I used the pandas library to calculate summary statistics of the traffic signs data set:
 
@@ -51,11 +50,11 @@ German Traffic Sign dataset have 43 classes/labels of traffic signs consisted of
 
 ![alt text][SummaryOfDataSet]
 
-As we see the above bar chart, the number of images in each class are biased. As a result, if we train the medel using the dataset, it may try to predict the favor of the one side. Therefore it is necessary to balance the number of sample images in each class. At the next session, the method of how to balance those will be discussed.
+As we see the above bar chart, the number of images in each class are biased. Some classes have more samples than others. As a result, if we train the medel using the dataset, it may try to predict the favor of the one side. Therefore it is necessary to balance the number of sample images in each class. At the next session, the method of how to balance and to preprocess those 32x32 shape images will be discussed.
 
-### 2. Include an exploratory visualization of the dataset.
+### 2. Preprocessing And Ballacing The dataset
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+
 
 ![alt text][image1]
 
