@@ -20,6 +20,8 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [SummaryOfDataSet]: ./Images/WriteUp/Number_of_Samples.png "Number of Samples in each class"
+[DarkContrast]: ./Images/WriteUp/dark_contrast.png "Dark contrast images"
+
 [image1]: ./examples/visualization.jpg "Visualization"
 [image2]: ./examples/grayscale.jpg "Grayscaling"
 [image3]: ./examples/random_noise.jpg "Random Noise"
@@ -49,15 +51,42 @@ German Traffic Sign dataset have 43 classes/labels of traffic signs consisted of
 * There are 43 classes in the data sets, and each class contains different number of images. The chart below is the summary of the number of images contained in each unique class of training dataset.
 
 ![alt text][SummaryOfDataSet]
+*Fig1. Number of Samples in each class*
 
 As we see the above bar chart, the number of images in each class are biased. Some classes have more samples than others. As a result, if we train the medel using the dataset, it may try to predict the favor of the one side. Therefore it is necessary to balance the number of sample images in each class. At the next session, the method of how to balance and to preprocess those 32x32 shape images will be discussed.
 
 ### 2. Preprocessing And Ballacing The dataset
 
+Sometimes some images are not distinguishable. They look dark and black, because constrast of them is low. The example is like below.
 
+![alt text][DarkContrast]
 
-![alt text][image1]
+Training the dataset containing the low constrast images with LeNet model results in 0.907 accuracy in maximum. This results does not match the criteria (over 0.93 accuracy), thus, preprocessing those sample images is necessary. For this, I implemented 8 different preprocessing tasks on 3 pickle files for training, validation, and test. This generated preprocessed 3 another pickle files for each, so eventually 24 pickle files were generated through the preprocess in total. Below is a summary of preprocessing tasks in terms of each method.
 
+1. Gray scale
+    1. Normalisation, data augmentation, using OpenCV
+    2. Sharpening, enhancing contrast, normalisation, data augmentation, using OpenCV
+    3. Sharpening, enhancing contrast, normalisation, data augmentation, using PIL and skikit-image
+    4. Sharpening, enhancing contrast, normalisation, data augmentation, using the method I made
+2. Colour scale
+    1. Normalisation, Data Augmentation, using OpenCV
+    2. Sharpening, normalisation, data augmentation, using OpenCV
+    3. Sharpening, enhancing YUV contrast, normalisation, data augmentation, using OpenCV
+    4. Sharpening, enhancing RGB contrast, normalisation, data augmentation, using OpenCV
+
+The output of each task is like these,
+1. Gray scale
+    1. Normalisation, data augmentation, using OpenCV
+    2. Sharpening, enhancing contrast, normalisation, data augmentation, using OpenCV
+    3. Sharpening, enhancing contrast, normalisation, data augmentation, using PIL and skikit-image
+    4. Sharpening, enhancing contrast, normalisation, data augmentation, using the method I made
+2. Colour scale
+    1. Normalisation, Data Augmentation, using OpenCV
+    2. Sharpening, normalisation, data augmentation, using OpenCV
+    3. Sharpening, enhancing YUV contrast, normalisation, data augmentation, using OpenCV
+    4. Sharpening, enhancing RGB contrast, normalisation, data augmentation, using OpenCV
+
+These 8 cases 
 ###Design and Test a Model Architecture
 
 ####1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
