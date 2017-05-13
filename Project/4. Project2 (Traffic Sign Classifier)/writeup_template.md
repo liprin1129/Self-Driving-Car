@@ -111,50 +111,57 @@ and all unique classes equally have 2010 samples.
 
 ### 3. Model Architecture
 
-####2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
+<!-- ####2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model. -->
 
 My final model consisted of the following layers:
 
-| Layer         		|     Description	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x1 Grayscale image						| 
-| Convolution 3x3     	| 1x1 stride, valid padding, outputs 30x30x6 	|
-| RELU					|												|
-| Convolution 3x3      	| 1x1 stride, valid padding, outputs 28x28x16	|
-| RELU					|												|
-| Max Pooling 2x2       | 2x2 stride, valid padding, outputs 14x14x16   |
-| Inception Model	    | Covolution 1x1, same padding, output 14x14x6  |
-|                  	    | Covolution 3x3, same padding, output 14x14x16 |
-|                  	    | Covolution 5x5, same padding, output 14x14x32 |
+| Layer         		|     Description	        					             | 
+|:---------------------:|:----------------------------------------------------------:| 
+| Input         		| 32x32x1 Grayscale image						             | 
+| Convolution 3x3     	| 1x1 stride, valid padding, outputs 30x30x6 	             |
+| RELU					|												             |
+| Convolution 3x3      	| 1x1 stride, valid padding, outputs 28x28x16	             |
+| RELU					|												             |
+| Max Pooling 2x2       | 2x2 stride, valid padding, outputs 14x14x16                |
+| Inception Model	    | Covolution 1x1, same padding, output 14x14x6               |
+|                  	    | Covolution 3x3, same padding, output 14x14x16              |
+|                  	    | Covolution 5x5, same padding, output 14x14x32              |
 |                  	    | Max Pooling 3x3, 1x1 stride, same padding, output 14x14x32 |
-|                  	    | Covolution 1x1, same padding, output 14x14x6  |
-|                  	    | output 14x14x60                               |
-| Convolution 5x5      	| 1x1 stride, valid padding, outputs 14x14x60	|
-| Dropout               | 0.5 probability                               |
-| RELU					|												|
-| Max Pooling 3x3       | 3x3 stride, outputs 3x3x230                   |
-| Fully connected		| outputs 1700 									|
-| Fully connected		| outputs 800 									|
-| Fully connected		| outputs 43 									|
-| Softmax				| etc.        									|
+|                  	    | Covolution 1x1, same padding, output 14x14x6               |
+|                  	    | output 14x14x60                                            |
+| Dropout               | 0.5 probability                                            |
+| Convolution 5x5      	| 1x1 stride, valid padding, outputs 14x14x60	             |
+| RELU					|												             |
+| Dropout               | 0.7 probability                                            |
+| Max Pooling 3x3       | 3x3 stride, outputs 3x3x230                                |
+| Fully connected		| outputs 1700 									             |
+| RELU					|												             |
+| Dropout               | 0.5 probability                                            |
+| Fully connected		| outputs 800 									             |
+| RELU					|												             |
+| Dropout               | 0.5 probability                                            |
+| Fully connected		| outputs 43 									             |
+| Softmax				|           									             |
 
-####3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+<!-- ####3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.-->
 
-To train the model, I used an ....
+To train the model, I minimised Cross Entropy, and used an Adam Optimizer with a batch size, 128, 30 epoches, and 0.001 learning rate.
 
-####4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+<!-- ####4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.-->
 
-My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
+The final model results were:
+* training set accuracy of 
+* validation set accuracy of 
 * test set accuracy of ?
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
+To get the best validation set accuracy, I compared 5 architectures varying pre-process tasks. 
+<!--* If an iterative approach was chosen:
+ What was the first architecture that was tried and why was it chosen?
 * What were some problems with the initial architecture?
 * How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
 * Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?-->
+
 
 If a well known architecture was chosen:
 * What architecture was chosen?
