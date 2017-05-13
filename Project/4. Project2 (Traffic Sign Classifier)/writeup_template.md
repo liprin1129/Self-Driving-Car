@@ -20,7 +20,15 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [SummaryOfDataSet]: ./Images/WriteUp/Number_of_Samples.png "Number of Samples in each class"
-[DarkContrast]: ./Images/WriteUp/dark_contrast.png "Dark contrast images"
+[original]: ./Images/WriteUp/original.png "Original Images"
+[preprocessed]: ./Images/WriteUp/preprocessed.png "Preprocessed Images"
+[augmented]: ./Images/WriteUp/augmented.png "Augmented Images"
+[transformation]: ./Images/WriteUp/transformation.png "Transformed Images"
+[class1]: ./Images/WriteUp/class1.png "class1"
+[class2]: ./Images/WriteUp/class2.png "class2"
+[class3]: ./Images/WriteUp/class3.png "class3"
+[class4]: ./Images/WriteUp/class4.png "class4"
+[class5]: ./Images/WriteUp/class5.png "class5"
 
 [image1]: ./examples/visualization.jpg "Visualization"
 [image2]: ./examples/grayscale.jpg "Grayscaling"
@@ -43,7 +51,17 @@ I implemented Convolutional Neural Network on German Traffic Sign data set to ge
 
 ### 1. German Traffic Sign Dataset:
 
-German Traffic Sign dataset have 43 classes/labels of traffic signs consisted of 34799 images for training, 3310 images for validation, and 12630 images for testing the network. I used the pandas library to calculate summary statistics of the traffic signs data set:
+German Traffic Sign dataset have 43 classes/labels of traffic signs consisted of 34799 images for training, 3310 images for validation, and 12630 images for testing the network. Below is representation images and labels of each class.
+
+![alt text][class1]
+![alt text][class2]
+![alt text][class3]
+![alt text][class4]
+![alt text][class5]
+
+*Fig1. Images and labels of classes*
+
+I used the pandas library to calculate summary statistics of the traffic signs data set:
 
 * The size of training set is 34799 with the 32 pixels for width and 32 pixels for height. Because the training set are colour image, an colour image is comprised of 3 channels of 32x32 pixels for red, green, and blue colour respectively. Therefore, training set has the 4D shape of (34799, 32, 32, 3).
 * The size of the validation set is 3310, and it was used for generalisation to have high performance. This is also comprised of colour images, therefore the shape of it is (3310, 32, 32, 3).
@@ -63,39 +81,35 @@ The chart below is the summary of the number of images contained in each unique 
 
 Sometimes some images are not distinguishable. They look dark and black, because constrast of them is low. The example is like below.
 
-![alt text][DarkContrast]
+![alt text][original]
 
-Training the dataset containing the low constrast images with LeNet model results in 0.907 accuracy in maximum. This results does not match the criteria (over 0.93 accuracy), thus, preprocessing those sample images is necessary. For this, I firstly changed the scale of images from RGB channels into one channel (gray scale). Then, I normalised images to have ranges from 0 to 1. 
+Training the dataset containing the low constrast images with LeNet model results in 0.907 accuracy in maximum. This results does not match the criteria (over 0.93 accuracy), thus, preprocessing those sample images is necessary. 
 
-To do this, I converted this image data into pandas' dataframe to deal with the data easily. grouped images in terms of classes.
+Firstly, I changed the scale of images from RGB channels into one channel (gray scale) in order that classification of grayscale images will have higher accuracy than RGB images.
+<!---Using grayscale images for object recognition with convolutional-recursive neural network)--> Then, histogram of those gray scaled images were streched to the either sides, using OpenCV function, _cv2.equalizeHist(img)_. Finally, the enhaced contrast images were normalised to have ranges from 0 to 1. Below is the result of the three steps (converting gray scale -> equlising histogram -> normalising).
+
+![alt text][preprocessed]
+*Fig2. Enhanced contrast*
+
+Another problem that the traffic sign dataset has is the number of images in each class are biased. In other words, some classes have more samples than others. 
 
 ![alt text][SummaryOfDataSet]
-*Fig1. Number of Samples in each class*
+*Fig3. Number of Samples in each class*
 
-As we see the above bar chart, the number of images in each class are biased. Some classes have more samples than others. As a result, if we train the medel using the dataset, it may try to predict the favor of the one side. Therefore it is necessary to balance the number of sample images in each class. At the next session, the method of how to balance and to preprocess those 32x32 shape images will be discussed.
+As a result, if we train the medel using the dataset, it may try to predict the favor of the one side. Therefore it is necessary to balance the number of sample images in each class. Thus, I balanced the number of images in each unique class. Because augmenting same images will just give computational load when I train a model, I augmented images in classes by adding transformed images which already exist in the classes until all classes have same number of samples as in a maximum class. For the transformation, I varied the size of images, rotated them, and implemented affain transformation.
 
-###Design and Test a Model Architecture
+The result of transformation is like below,
+![alt text][transformation]
+*Fig4. Transformed Images*
 
-####1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
+and all unique classes equally have 2010 samples.
 
-As a first step, I decided to convert the images to grayscale because ...
+![alt text][augmented]
+*Fig5. Number of Augmented Samples in each class*
 
-Here is an example of a traffic sign image before and after grayscaling.
+<!--- Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)-->
 
-![alt text][image2]
-
-As a last step, I normalized the image data because ...
-
-I decided to generate additional data because ... 
-
-To add more data to the the data set, I used the following techniques because ... 
-
-Here is an example of an original image and an augmented image:
-
-![alt text][image3]
-
-The difference between the original data set and the augmented data set is the following ... 
-
+### 3. Model Architecture
 
 ####2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
@@ -103,17 +117,26 @@ My final model consisted of the following layers:
 
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
+| Input         		| 32x32x1 Grayscale image						| 
+| Convolution 3x3     	| 1x1 stride, valid padding, outputs 30x30x6 	|
 | RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
+| Convolution 3x3      	| 1x1 stride, valid padding, outputs 28x28x16	|
+| RELU					|												|
+| Max Pooling 2x2       | 2x2 stride, valid padding, outputs 14x14x16   |
+| Inception Model	    | Covolution 1x1, same padding, output 14x14x6  |
+|                  	    | Covolution 3x3, same padding, output 14x14x16 |
+|                  	    | Covolution 5x5, same padding, output 14x14x32 |
+|                  	    | Max Pooling 3x3, 1x1 stride, same padding, output 14x14x32 |
+|                  	    | Covolution 1x1, same padding, output 14x14x6  |
+|                  	    | output 14x14x60                               |
+| Convolution 5x5      	| 1x1 stride, valid padding, outputs 14x14x60	|
+| Dropout               | 0.5 probability                               |
+| RELU					|												|
+| Max Pooling 3x3       | 3x3 stride, outputs 3x3x230                   |
+| Fully connected		| outputs 1700 									|
+| Fully connected		| outputs 800 									|
+| Fully connected		| outputs 43 									|
 | Softmax				| etc.        									|
-|						|												|
-|						|												|
- 
-
 
 ####3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
