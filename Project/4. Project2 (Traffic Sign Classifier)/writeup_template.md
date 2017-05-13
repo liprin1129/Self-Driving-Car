@@ -48,12 +48,16 @@ German Traffic Sign dataset have 43 classes/labels of traffic signs consisted of
 * The size of training set is 34799 with the 32 pixels for width and 32 pixels for height. Because the training set are colour image, an colour image is comprised of 3 channels of 32x32 pixels for red, green, and blue colour respectively. Therefore, training set has the 4D shape of (34799, 32, 32, 3).
 * The size of the validation set is 3310, and it was used for generalisation to have high performance. This is also comprised of colour images, therefore the shape of it is (3310, 32, 32, 3).
 * The size of test set is 12630 colour images. This also have the same width and height as the training images and validation images, and the shape of the test set is (12630, 32, 32, 3) accordingly.
-* There are 43 classes in the data sets, and each class contains different number of images. The chart below is the summary of the number of images contained in each unique class of training dataset.
+* There are 43 classes in the data sets, and each class contains different number of images. 
 
-![alt text][SummaryOfDataSet]
-*Fig1. Number of Samples in each class*
+The chart below is the summary of the number of images contained in each unique class of training dataset.
 
-As we see the above bar chart, the number of images in each class are biased. Some classes have more samples than others. As a result, if we train the medel using the dataset, it may try to predict the favor of the one side. Therefore it is necessary to balance the number of sample images in each class. At the next session, the method of how to balance and to preprocess those 32x32 shape images will be discussed.
+| File | Number of Images | Shape |
+|:---------------------:|:--:|:--:| 
+| Train | 34799 | 32x32x3 RGB image |
+| Validation | 3310 | 32x32x3 RGB image |
+| Test | 12630 | 32x32x3 RGB image |
+||||
 
 ### 2. Preprocessing And Ballacing The dataset
 
@@ -61,32 +65,15 @@ Sometimes some images are not distinguishable. They look dark and black, because
 
 ![alt text][DarkContrast]
 
-Training the dataset containing the low constrast images with LeNet model results in 0.907 accuracy in maximum. This results does not match the criteria (over 0.93 accuracy), thus, preprocessing those sample images is necessary. For this, I implemented 8 different preprocessing tasks on 3 pickle files for training, validation, and test. This generated preprocessed 3 another pickle files for each, so eventually 24 pickle files were generated through the preprocess in total. Below is a summary of preprocessing tasks in terms of each method.
+Training the dataset containing the low constrast images with LeNet model results in 0.907 accuracy in maximum. This results does not match the criteria (over 0.93 accuracy), thus, preprocessing those sample images is necessary. For this, I firstly changed the scale of images from RGB channels into one channel (gray scale). Then, I normalised images to have ranges from 0 to 1. 
 
-1. Gray scale
-    1. Normalisation, data augmentation, using OpenCV
-    2. Sharpening, enhancing contrast, normalisation, data augmentation, using OpenCV
-    3. Sharpening, enhancing contrast, normalisation, data augmentation, using PIL and skikit-image
-    4. Sharpening, enhancing contrast, normalisation, data augmentation, using the method I made
-2. Colour scale
-    1. Normalisation, Data Augmentation, using OpenCV
-    2. Sharpening, normalisation, data augmentation, using OpenCV
-    3. Sharpening, enhancing YUV contrast, normalisation, data augmentation, using OpenCV
-    4. Sharpening, enhancing RGB contrast, normalisation, data augmentation, using OpenCV
+To do this, I converted this image data into pandas' dataframe to deal with the data easily. grouped images in terms of classes.
 
-The output of each task is like these,
-1. Gray scale
-    1. Normalisation, data augmentation, using OpenCV
-    2. Sharpening, enhancing contrast, normalisation, data augmentation, using OpenCV
-    3. Sharpening, enhancing contrast, normalisation, data augmentation, using PIL and skikit-image
-    4. Sharpening, enhancing contrast, normalisation, data augmentation, using the method I made
-2. Colour scale
-    1. Normalisation, Data Augmentation, using OpenCV
-    2. Sharpening, normalisation, data augmentation, using OpenCV
-    3. Sharpening, enhancing YUV contrast, normalisation, data augmentation, using OpenCV
-    4. Sharpening, enhancing RGB contrast, normalisation, data augmentation, using OpenCV
+![alt text][SummaryOfDataSet]
+*Fig1. Number of Samples in each class*
 
-These 8 cases 
+As we see the above bar chart, the number of images in each class are biased. Some classes have more samples than others. As a result, if we train the medel using the dataset, it may try to predict the favor of the one side. Therefore it is necessary to balance the number of sample images in each class. At the next session, the method of how to balance and to preprocess those 32x32 shape images will be discussed.
+
 ###Design and Test a Model Architecture
 
 ####1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
