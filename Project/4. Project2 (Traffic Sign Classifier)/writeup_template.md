@@ -30,14 +30,11 @@ The goals / steps of this project are the following:
 [class4]: ./Images/WriteUp/class4.png "class4"
 [class5]: ./Images/WriteUp/class5.png "class5"
 
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+[test1]: ./Images/Test_images/no_passing.jpg "no passing"
+[test2]: ./Images/Test_images/right_of_way_at_the_next_intersection.jpg "right_of_way_at_the_next_intersection"
+[test3]: ./Images/Test_images/speed_limit_80km.jpg "speed_limit_80km"
+[test4]: ./Images/Test_images/yield.jpg "yield"
+[test5]: ./Images/Test_images/general_causion.png "general_causion"
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -59,7 +56,7 @@ German Traffic Sign dataset have 43 classes/labels of traffic signs consisted of
 ![alt text][class4]
 ![alt text][class5]
 
-*Fig1. Images and labels of classes*
+***Fig1. Images and labels of classes***
 
 I used the pandas library to calculate summary statistics of the traffic signs data set:
 
@@ -75,7 +72,10 @@ The chart below is the summary of the number of images contained in each unique 
 | Train | 34799 | 32x32x3 RGB image |
 | Validation | 3310 | 32x32x3 RGB image |
 | Test | 12630 | 32x32x3 RGB image |
-||||
+|||
+|||
+
+***Table 1. Information of input images***
 
 ## 2. Preprocessing And Ballacing The dataset
 
@@ -83,29 +83,35 @@ Sometimes some images are not distinguishable. They look dark and black, because
 
 ![alt text][original]
 
+***Fig 2. Low contrast images.***
+
 Training the dataset containing the low constrast images with LeNet model results in 0.907 accuracy in maximum. This results does not match the criteria (over 0.93 accuracy), thus, preprocessing those sample images is necessary. 
 
 Firstly, I changed the scale of images from RGB channels into one channel (gray scale) in order that classification of grayscale images will have higher accuracy than RGB images.
 <!---Using grayscale images for object recognition with convolutional-recursive neural network)--> Then, histogram of those gray scaled images were streched to the either sides, using OpenCV function, _cv2.equalizeHist(img)_. Finally, the enhaced contrast images were normalised to have ranges from 0 to 1. Below is the result of the three steps (converting gray scale -> equlising histogram -> normalising).
 
 ![alt text][preprocessed]
-*Fig2. Enhanced contrast*
+
+***Fig3. Enhanced contrast***
 
 Another problem that the traffic sign dataset has is the number of images in each class are biased. In other words, some classes have more samples than others. 
 
 ![alt text][SummaryOfDataSet]
-*Fig3. Number of Samples in each class*
+
+***Fig4. Number of Samples in each class***
 
 As a result, if we train the medel using the dataset, it may try to predict the favor of the one side. Therefore it is necessary to balance the number of sample images in each class. Thus, I balanced the number of images in each unique class. Because augmenting same images will just give computational load when I train a model, I augmented images in classes by adding transformed images which already exist in the classes until all classes have same number of samples as in a maximum class. For the transformation, I varied the size of images, rotated them, and implemented affain transformation.
 
 The result of transformation is like below,
 ![alt text][transformation]
-*Fig4. Transformed Images*
+
+***Fig5. Transformed Images***
 
 and all unique classes equally have 2010 samples.
 
 ![alt text][augmented]
-*Fig5. Number of Augmented Samples in each class*
+
+***Fig6. Number of Augmented Samples in each class***
 
 <!--- Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)-->
 
@@ -142,7 +148,10 @@ My final model consisted of the following layers:
 | Dropout               | 0.5 probability                                            |
 | Fully connected		| outputs 43 									             |
 | Softmax				|           									             |
+||
+||
 
+***Table2. Chosen model architecture***
 <!-- ####3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.-->
 
 To train the model, I minimised Cross Entropy, and used an Adam Optimizer with a batch size, 128, 30 epoches, and 0.001 learning rate.
@@ -180,16 +189,21 @@ To get the best validation set accuracy, I compared 5 architectures varying colo
 | Input         		| 32x32x? Grayscale image						             | 
 | Convolution 5x5     	| 1x1 stride, valid padding, outputs 28x28x32 	             |
 | RELU					|												             |
+| Dropout				| 0.9 probability								             |
 | Convolution 5x5      	| 1x1 stride, valid padding, outputs 24x24x64	             |
 | RELU					|												             |
+| Dropout				| 0.8 probability								             |
 | Max Pooling 2x2       | 2x2 stride, valid padding, outputs 12x12x64                |
 | Convolution 5x5      	| 1x1 stride, valid padding, outputs 8x8x128	             |
 | RELU					|												             |
+| Dropout				| 0.7 probability								             |
 | Max Pooling 2x2       | 2x2 stride, valid padding, outputs 4x4x128                 |
 | Fully connected		| outputs 1024  								             |
 | RELU					|												             |
+| Dropout				| 0.6 probability								             |
 | Fully connected		| outputs 512 									             |
 | RELU					|												             |
+| Dropout				| 0.5 probability								             |
 | Fully connected		| outputs 43 									             |
 
 * Architecture 3
@@ -264,8 +278,69 @@ To get the best validation set accuracy, I compared 5 architectures varying colo
 | 7 | Colour | O | O | O | Scikit image and PIL | O |
 | 8 | Colour | O | O | O | Self | O |
 
+***Table 3.Pre-processing tasks***
 
+Firstly, I used LeNet model architecture to train pre-processed gray scale images as a start point. It had ??? validation accuracy on number 1 task in the above table. Then I increased depths of each layer with different dropout parameters on each layers, but not changed filter shapes. In this time, it had ??? validation accuracy. Next, I increased depths of each convolutional layers and added dropout with 0.5 probability, because dropout can solve the overfitting problem in this high depths of layers. Also I does not change the shape of filters. This model architecture had ??? accuracy on trainig dataset and ??? on validation dataset, which means under fitting. Increasing depth more than 32 had underfitting problem, so I stop to increase depths of each layer, and changed the basic model architecture, Inception Model.
 
+To use inception model, I put 1x1 convolutional layer before an inception layer. After the inception layer, I set dropout with 0.5 probability to prevent overfitting problem. This task is explained in table 1. Finally, I put one more inception model to the network and check a validation accuracy.
+
+I implemented these 5 model architectures on 8 cases of the pre-processed dataset. Therefore, I compared 40 cases in total. Below is the table for this 40 cases.
+
+|Pre-processed Number|Model Architecture|Training Accuracy|Validation Accuracy|
+|:-:|:-:|:-:|:-:|
+|1|Model 1| | |
+| |Model 2| | |
+| |Model 3| | |
+| |Model 4| | |
+| |Model 5| | |
+||||
+|2|Model 1| | |
+| |Model 2| | |
+| |Model 3| | |
+| |Model 4| | |
+| |Model 5| | |
+||||
+|3|Model 1| | |
+| |Model 2| | |
+| |Model 3| | |
+| |Model 4| | |
+| |Model 5| | |
+||||
+|4|Model 1| | |
+| |Model 2| | |
+| |Model 3| | |
+| |Model 4| | |
+| |Model 5| | |
+||||
+|5|Model 1| | |
+| |Model 2| | |
+| |Model 3| | |
+| |Model 4| | |
+| |Model 5| | |
+||||
+|6|Model 1| | |
+| |Model 2| | |
+| |Model 3| | |
+| |Model 4| | |
+| |Model 5| | |
+||||
+|7|Model 1| | |
+| |Model 2| | |
+| |Model 3| | |
+| |Model 4| | |
+| |Model 5| | |
+||||
+|8|Model 1| | |
+| |Model 2| | |
+| |Model 3| | |
+| |Model 4| | |
+| |Model 5| | |
+||||
+||||
+
+***Table 4. Comparison among different colour and model Architecture***
+
+In conclusion, to increase training and validation accuracy is influenced by both conditions of pre-processed images and of model architecture. Grayscale image with normalisation and augmentation using OpenCV library had higher validation accuracy than others in all model architectures. Therefore, it is assumed that grayscale image has higher classification accuracy than colour images due to the advantage of reduced computational cost.
 <!--* If an iterative approach was chosen:
  What was the first architecture that was tried and why was it chosen?
 * What were some problems with the initial architecture?
@@ -273,22 +348,28 @@ To get the best validation set accuracy, I compared 5 architectures varying colo
 * Which parameters were tuned? How were they adjusted and why?
 * What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?-->
 
-
+<!--
 If a well known architecture was chosen:
 * What architecture was chosen?
 * Why did you believe it would be relevant to the traffic sign application?
 * How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
+-->
 
 ## 4. Test a Model on New Images
 
-####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+<!--#### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.-->
 
 Here are five German traffic signs that I found on the web:
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+<img src="./Images/Test_images/no_passing.jpg" width=200>
+<img src="./Images/Test_images/right_of_way_at_the_next_intersection.jpg" width=200>
+<img src="./Images/Test_images/speed_limit_80km.jpg" width=200>
+<img src="./Images/Test_images/yield.jpg" width=200>
+<img src="./Images/Test_images/general_causion.png" width=200>
 
-The first image might be difficult to classify because ...
+***Fig7. Test images found on the web***
+
+The first image (no passing sign) and the last image (general causionsign) might be difficult to classify, because in pre-processing task, augmented images doen not include resize images, and in the two test images, traffic sign occupy almost all spaces of their images.
 
 ####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
