@@ -367,7 +367,7 @@ Here are five German traffic signs that I found on the web:
 <img src="./Images/Test_images/yield.jpg" width=200>
 <img src="./Images/Test_images/general_causion.png" width=200>
 
-***Fig7. Test images found on the web***
+***Fig7. 5 test images found on the web***
 
 The first image (no passing sign) and the last image (general causionsign) might be difficult to classify, because in pre-processing task, augmented images doen not include resize images, and in the two test images, traffic sign occupy almost all spaces of their images.
 
