@@ -286,12 +286,12 @@ To use inception model, I put 1x1 convolutional layer before an inception layer.
 
 I implemented these 5 model architectures on 8 cases of the pre-processed dataset. Therefore, I compared 40 cases in total. Below is the table for this 40 cases.
 
-|Pre-processed Number|Model Architecture|Training Accuracy|Validation Accuracy|
-|:-:|:-:|:-:|:-:|
-|1|Model 1| | |
-| |Model 2| | |
-| |Model 3| | |
-| |Model 4| | |
+|Pre-processed Number|Model Architecture|Training Accuracy|Validation Accuracy| Test Accuracy| Run Time|
+|:-:|:-:|:-:|:-:|:-:|:-:|
+|1|Model 1| 0.992 | 0.857 | 0.841 | 8min 51s  |
+| |Model 2| 0.992 | 0.935 | 0.912 | 23min 39s |
+| |Model 3| 0.025 | 0.021 | 0.024 | ?? |
+| |Model 4| 0.992 | 0.951 | 0.924 | 34min 43s |
 | |Model 5| | |
 ||||
 |2|Model 1| | |
