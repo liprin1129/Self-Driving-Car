@@ -290,9 +290,9 @@ I implemented these 5 model architectures on 8 cases of the pre-processed datase
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |1|Model 1| 0.992 | 0.857 | 0.841 | 8min 51s  |
 | |Model 2| 0.992 | 0.935 | 0.912 | 23min 39s |
-| |Model 3| 0.025 | 0.021 | 0.024 | ?? |
+| |Model 3| 0.025 | 0.021 | 0.024 | ??        |
 | |Model 4| 0.992 | 0.951 | 0.924 | 34min 43s |
-| |Model 5| | |
+| |Model 5| 0.979 | 0.937 | 0.908 | 46min 43s |
 ||||
 |2|Model 1| | |
 | |Model 2| | |
@@ -340,7 +340,8 @@ I implemented these 5 model architectures on 8 cases of the pre-processed datase
 
 ***Table 4. Comparison among different colour and model Architecture***
 
-In conclusion, to increase training and validation accuracy is influenced by both conditions of pre-processed images and of model architecture. Grayscale image with normalisation and augmentation using OpenCV library had higher validation accuracy than others in all model architectures. Therefore, it is assumed that grayscale image has higher classification accuracy than colour images due to the advantage of reduced computational cost.
+In conclusion, training and validation accuracy is influenced by both conditions of pre-processed images and of model architecture. Grayscale image with normalisation and augmentation using OpenCV library had higher validation accuracy than others pre-processing tasks. Therefore, it is assumed that grayscale image has higher classification accuracy than colour images due to the advantage of reduced computational cost. In addition, among different model architectures, inception model represented in table 2 was the highest validation accuracy.
+
 <!--* If an iterative approach was chosen:
  What was the first architecture that was tried and why was it chosen?
 * What were some problems with the initial architecture?
@@ -384,7 +385,7 @@ Here are the results of the prediction:
 | Slippery Road			| Slippery Road      							|
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess ? of the 5 traffic signs, which gives an accuracy of ??%. This compares favorably to the accuracy on the test set of ...
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
