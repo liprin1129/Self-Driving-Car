@@ -291,7 +291,7 @@ I implemented these 5 model architectures on 8 cases of the pre-processed datase
 |1|Model 1| 0.992 | 0.857 | 0.841 | 8min 51s  |
 | |Model 2| 0.992 | 0.935 | 0.912 | 23min 39s |
 | |Model 3| 0.025 | 0.021 | 0.024 | ??        |
-| |Model 4| 0.992 | 0.951 | 0.924 | 34min 43s |
+| |Model 4| 0.993 | 0.947 | 0.920 | 34min 57s |
 | |Model 5| 0.979 | 0.937 | 0.908 | 46min 43s |
 ||||
 |2|Model 1| 0.984 | 0.814 | 0.360 | 7min 56s  |
@@ -315,32 +315,32 @@ I implemented these 5 model architectures on 8 cases of the pre-processed datase
 |5|Model 1| | |
 | |Model 2| | |
 | |Model 3| | |
-| |Model 4| 0.964 | 0.907 | 0.890 | 47min 12s |
+| |Model 4| 
 | |Model 5| | |
 ||||
 |6|Model 1| | |
 | |Model 2| | |
 | |Model 3| | |
-| |Model 4| 0.976 | 0.926 | 0.905 | 47min 6s |
+| |Model 4| 0.964 | 0.907 | 0.890 | 47min 12s |
 | |Model 5| | |
 ||||
 |7|Model 1| | |
 | |Model 2| | |
 | |Model 3| | |
-| |Model 4| | |
+| |Model 4| 0.976 | 0.926 | 0.905 | 47min 6s |
 | |Model 5| | |
 ||||
 |8|Model 1| | |
 | |Model 2| | |
 | |Model 3| | |
-| |Model 4| | |
+| |Model 4| 
 | |Model 5| | |
 ||||
 ||||
 
 ***Table 4. Comparison among different colour and model Architecture***
 
-In conclusion, training and validation accuracy is influenced by both conditions of pre-processed images and of model architecture. Grayscale image with normalisation and augmentation using OpenCV library had higher validation accuracy than others pre-processing tasks. Therefore, it is assumed that grayscale image has higher classification accuracy than colour images due to the advantage of reduced computational cost. In addition, among different model architectures, inception model represented in table 2 was the highest validation accuracy.
+In conclusion for these comparison tasks, training and validation accuracy is influenced by both conditions of pre-processed images and of model architecture. Grayscale image with normalisation and augmentation using OpenCV library had higher validation accuracy than others pre-processing tasks. Therefore, it is assumed that grayscale image has higher classification accuracy than colour images due to the advantage of reduced computational cost. In addition, among different model architectures, inception model represented in table 2 was the highest validation accuracy.
 
 <!--* If an iterative approach was chosen:
  What was the first architecture that was tried and why was it chosen?
@@ -378,11 +378,11 @@ Here are the results of the prediction:
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| No passing      		| Stop sign   									| 
+| U right of way at the next intersection | U-turn					|
+| Speed limit 80km/h	| Yield											|
+| Yeild	      	    	| Bumpy Road					 				|
+| General causion		| Slippery Road      							|
 
 
 The model was able to correctly guess ? of the 5 traffic signs, which gives an accuracy of ??%. This compares favorably to the accuracy on the test set of ...
