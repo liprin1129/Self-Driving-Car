@@ -306,17 +306,17 @@ I implemented these 5 model architectures on 8 cases of the pre-processed datase
 | |Model 4| 0.987 | 0.928 | 0.423 | 29min 21s |
 | |Model 5| 0.969 | 0.924 | 0.419 | 46min 45s |
 ||||
-|4|Model 1| |  |
-| |Model 2| | |
-| |Model 3| | |
-| |Model 4| 0.969 | 0.899 | 0.887 | 47min 19s |
-| |Model 5| | |
+|4|Model 1| 0.023 | 0.023 | 0.023 | 8min 1s |
+| |Model 2| 0.023 | 0.025 | 0.024 | 19min 5s |
+| |Model 3| 0.022 | 0.024 | 0.024 | 2h 8min |
+| |Model 4| 0.022 | 0.024 | 0.023 | 23min 50s |
+| |Model 5| 0.022 | 0.024 | 0.023 | ?? |
 ||||
-|5|Model 1| | |
-| |Model 2| | |
-| |Model 3| | |
-| |Model 4| 
-| |Model 5| | |
+|5|Model 1| 0.023 | 0.023 | 0.023 | 8min 20s |
+| |Model 2| 0.023 | 0.023 | 0.023 | 21min 2s |
+| |Model 3| 0.023 | 0.023 | 0.023 | ?? |
+| |Model 4| 0.023 | 0.023 | 0.023 | 48min 48s |
+| |Model 5| 0.023 | 0.023 | 0.023 | ?? |
 ||||
 |6|Model 1| 0.802 | 0.789 | 0.734 | 12min 32s |
 | |Model 2| 0.988 | 0.936 | 0.902 | 28min 46s |
@@ -324,17 +324,17 @@ I implemented these 5 model architectures on 8 cases of the pre-processed datase
 | |Model 4| 0.964 | 0.909 | 0.890 | 47min 12s |
 | |Model 5| 0.945 | 0.895 | 0.814 | 1h 18min  |
 ||||
-|7|Model 1| | 0.794 |
-| |Model 2| | |
-| |Model 3| | |
+|7|Model 1| 0.968 | 0.794 | 0.775 | 18min 2s |
+| |Model 2| 0.991 | 0.933 | 0.921 | 20min 5s |
+| |Model 3| 0.024 | 0.022 | 0.023 | ?? |
 | |Model 4| 0.976 | 0.926 | 0.905 | 47min 6s |
-| |Model 5| | |
+| |Model 5| 0.976 | 0.941 | 0.905 | 48min 2s |
 ||||
-|8|Model 1| | 0.758 |
-| |Model 2| | |
-| |Model 3| | |
-| |Model 4| 
-| |Model 5| | |
+|8|Model 1| 0.990 | 0.795 | 0.803 | 4min 59s |
+| |Model 2| 0.993 | 0.944 | 0.925 | 25min 11s |
+| |Model 3| 
+| |Model 4| 0.968 | 0.899 | 0.892 | 39min 20s |
+| |Model 5| 0.964 | 0.901 | 0.895 | 39min 5s | 
 ||||
 ||||
 
