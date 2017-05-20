@@ -1,5 +1,6 @@
-#**Traffic Sign Recognition** 
+# **Traffic Sign Recognition** 
 
+<!--
 ##Writeup Template
 
 ###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
@@ -7,7 +8,7 @@
 ---
 
 **Build a Traffic Sign Recognition Project**
-
+-->
 The goals / steps of this project are the following:
 * Load the data set (see below for links to the project data set)
 * Explore, summarize and visualize the data set
@@ -36,17 +37,19 @@ The goals / steps of this project are the following:
 [test4]: ./Images/Test_images/yield.jpg "yield"
 [test5]: ./Images/Test_images/general_causion.png "general_causion"
 
+<!--
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
 ---
 ## README
-
+-->
 I implemented Convolutional Neural Network on German Traffic Sign data set to generalise German traffic signs images and to predict of that. Here is a link to my [project code](https://github.com/liprin1129/Self-Driving-Car/blob/master/Project/4.%20Project2%20(Traffic%20Sign%20Classifier)/Traffic_Sign_Classifier.ipynb)
 
-## Data Set Summary & Exploration
+---
+## 1. Data Set Summary & Exploration
 
-## 1. German Traffic Sign Dataset:
+### 1.1. German Traffic Sign Dataset:
 
 German Traffic Sign dataset have 43 classes/labels of traffic signs consisted of 34799 images for training, 3310 images for validation, and 12630 images for testing the network. Below is representation images and labels of each class.
 
@@ -77,7 +80,8 @@ The chart below is the summary of the number of images contained in each unique 
 
 ***Table 1. Information of input images***
 
-## 2. Preprocessing And Ballacing The dataset
+---
+### 1.2. Preprocessing And Ballacing The dataset
 
 Sometimes some images are not distinguishable. They look dark and black, because constrast of them is low. The example is like below.
 
@@ -115,6 +119,7 @@ and all unique classes equally have 2010 samples.
 
 <!--- Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)-->
 
+---
 ## 3. Model Architecture
 
 <!-- ####2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model. -->
@@ -371,40 +376,91 @@ Here are five German traffic signs that I found on the web:
 ***Fig7. 5 test images found on the web***
 
 The first image (no passing sign) and the last image (general causionsign) might be difficult to classify, because in pre-processing task, augmented images doen not include resize images, and in the two test images, traffic sign occupy almost all spaces of their images.
-
-####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+<!--
+####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).-->
 
 Here are the results of the prediction:
 
-| Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| No passing      		| Stop sign   									| 
-| U right of way at the next intersection | U-turn					|
-| Speed limit 80km/h	| Yield											|
-| Yeild	      	    	| Bumpy Road					 				|
-| General causion		| Slippery Road      							|
+<img src="./Images/WriteUp/predict_test.png" width=500>
 
+***Fig8. Prediction on the test images***
 
-The model was able to correctly guess ? of the 5 traffic signs, which gives an accuracy of ??%. This compares favorably to the accuracy on the test set of ...
+| Image			        |     prediction | 
+|:-:|:-:| 
+| No passing      		| No Passing  | 
+| U right of way at the next intersection | U right of way at the next intersection |
+| Speed limit 80km/h	| Speed limit 80km/h |
+| Yeild	      	    	| Yeild |
+| General causion		| General causion |
+***Table5. Prediction on test images***
 
-####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
+The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 0.8 even though the accuracy on the test set of 0.915, because the probability interval is 0.2.
+
+<!--####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)-->
 
 The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+For the first image, the model is relatively sure that this is a no 'passing sign' (probability of 0.26). The top five soft max probabilities were
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+| .26         			| No passing | 
+| .24     				| Dangerous curve to the right	|
+| .13					| Slippery road |
+| .10	      			| End of no passing |
+| .06				    | Vehicles over 3.5 metric tons prohibited |
 
+***Table6. 5 Softmax Probabilities for 'no passing' sign***
 
-For the second image ... 
+For the second image the model is relatively sure that this is a pedestrians sign (probability of 0.50), and the image does contain a 'Right-of-way at the next intersection' sign. The top five soft max probabilities were
 
-### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
-####1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| .50         			| Pedestrians| 
+| .48 | Right-of-way at the next intersection |
+| .03	| Children crossing |
+| less than .00	| General caution |
+| less than .00	| Right-of-way at the next intersection |
+
+***Table7. 5 Softmax Probabilities for 'Right-of-way at the next intersection' sign***
+
+For the second image the model is relatively sure that this is a 'Speed limit (80km/h)' sign (probability of 0.72).
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| .72         			| Speed limit (80km/h) | 
+| .27 | Speed limit (60km/h) |
+| less than .00	| End of speed limit (80km/h) |
+| less than .00	| Speed limit (30km/h) |
+| less than .00	| Speed limit (50km/h) |
+
+***Table9. 5 Softmax Probabilities for 'Speed limit (80km/h)' sign***
+
+For the fourth image the model believe that this is a 'yield' sign (probability of 0.99)
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| .99         			| Yield | 
+| less than .00 | Speed limit (60km/h) |
+| less than .00	| Bumpy road |
+| less than .00	| Stop |
+| less than .00	| Road work |
+
+***Table10. 5 Softmax Probabilities for 'Yield' sign***
+
+For the fifth image the model certainly sure that this is a 'general caution' sign (probability of 0.99)
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| .99         			| General caution | 
+| less than .00 | Traffic signals |
+| less than .00	| Road narrows on the right |
+| less than .00	| Bumpy road |
+| less than .00	| Bicycles crossing |
+
+***Table11. 5 Softmax Probabilities for 'General caution' sign***
+
+<!--### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
+####1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?-->
 
 
