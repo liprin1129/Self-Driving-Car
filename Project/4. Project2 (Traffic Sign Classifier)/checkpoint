@@ -1,2 +1,2 @@
-model_checkpoint_path: "IC"
-all_model_checkpoint_paths: "IC"
+model_checkpoint_path: "IC1"
+all_model_checkpoint_paths: "IC1"
