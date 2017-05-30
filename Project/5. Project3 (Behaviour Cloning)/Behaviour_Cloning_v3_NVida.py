@@ -6,11 +6,10 @@ Pandas
 import csv
 import cv2
 import numpy as np
-import pandas as pd
 from tqdm import tqdm
 
 lines = []
-with open('data/driving_log.csv') as csvfile:
+with open('data/driving_log_change.csv') as csvfile:
     reader = csv.reader(csvfile)
     for line in reader:
         lines.append(line)
@@ -22,9 +21,10 @@ print(np.shape(lines))
 for idx, line in tqdm(enumerate(lines)):
     if idx > 0:
         for i in range(3):
-            source_path = line[i]
+            source_path = line[i+1] #line[i]
             filename = source_path.split('/')
             #print(filename[-1])
+            
             current_path = 'data/IMG/' + filename[-1]
             #print(current_path)
 
@@ -33,7 +33,7 @@ for idx, line in tqdm(enumerate(lines)):
             #print(np.shape(image))
             #print(line[3])
         correction = 0.2
-        measurement = float(line[3])
+        measurement = float(line[4]) #float(line[4])
         measurements.append(measurement)
         measurements.append(measurement+correction)
         measurements.append(measurement-correction)
@@ -45,7 +45,7 @@ for image, measurement in zip(images, measurements):
     augmented_images.append(image)
     augmented_measurements.append(measurement)
     flipped_image = cv2.flip(image, 1)
-    flipped_measurement = measurment * -1.0
+    flipped_measurement = measurement * -1.0
     augmented_images.append(flipped_image)
     augmented_measurements.append(flipped_measurement)
 
