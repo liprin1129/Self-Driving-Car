@@ -109,21 +109,6 @@ if __name__ == '__main__':
         #undistort the image
         img = cv2.undistort(img, mtx, dist, None, mtx)
 
-        # process image and generate binary pixel of interests
-        preprocessed_img = np.zeros_like(img[:,:,0])
-        grad_x = abs_sobel_thresh(img, orient='x', thresh_min=12, thresh_max=255)
-        grad_y = abs_sobel_thresh(img, orient='y', thresh_min=25, thresh_max=255)
-        c_binary = colour_threshold(img, sthresh=(150, 255), vthresh=(50, 255))
-        
-        mag_binary = mag_thresh(img, sobel_kernel=9, mag_thresh=(30, 100))
-        dir_binary = dir_threshold(img, sobel_kernel=15, thresh=(0.7, 1.3))
-        #preprocessed_img[( (grad_x == 1) & (grad_y == 1) | (c_binary == 1) )] = 255
-        preprocessed_img[( (grad_x == 1) & (grad_y == 1) ) | (c_binary==1) | ((mag_binary==1) & (dir_binary==1))] = 255
-
-        result = preprocessed_img
-        write_name = './test_images/1. preprocessed_img' + str(idx+1) + '.jpg'
-        cv2.imwrite(write_name, result)
-
         # work on defining perspective transformation area
         img_size = (img.shape[1], img.shape[0])
         bot_width = 0.76 # percent of bottom trapezoid height
@@ -138,10 +123,27 @@ if __name__ == '__main__':
         # perform the transform
         M = cv2.getPerspectiveTransform(src, dst)
         Minv = cv2.getPerspectiveTransform(dst,src)
-        warped = cv2.warpPerspective(preprocessed_img, M, img_size, flags=cv2.INTER_LINEAR)
+        warped = cv2.warpPerspective(img, M, img_size, flags=cv2.INTER_LINEAR)
 
         result = warped
-        write_name = './test_images/2. warped' + str(idx+1) + '.jpg'
+        write_name = './test_images/1. warped' + str(idx+1) + '.jpg'
+        cv2.imwrite(write_name, result)
+
+        # process image and generate binary pixel of interests
+        preprocessed_img = np.zeros_like(img[:,:,0])
+        grad_x = abs_sobel_thresh(warped, orient='x', thresh_min=12, thresh_max=255)
+        grad_y = abs_sobel_thresh(warped, orient='y', thresh_min=25, thresh_max=255)
+        #c_binary = colour_threshold(warped, sthresh=(80, 255), vthresh=(50, 255))
+        c_binary = colour_threshold(warped, sthresh=(80, 160), vthresh=(80, 160))
+        
+        mag_binary = mag_thresh(warped, sobel_kernel=9, mag_thresh=(80, 230))
+        #dir_binary = dir_threshold(warped, sobel_kernel=23, thresh=(45*np.pi/180, 90*np.pi/180))
+        #preprocessed_img[( (grad_x == 1) & (grad_y == 1) | (c_binary == 1) )] = 255
+        preprocessed_img[( (grad_x == 1) & (grad_y == 1) ) | (c_binary==1) | (mag_binary==1)] = 255
+
+        result = preprocessed_img
+        warped = preprocessed_img
+        write_name = './test_images/2. preprocessed_img' + str(idx+1) + '.jpg'
         cv2.imwrite(write_name, result)
 
         window_width = 25
