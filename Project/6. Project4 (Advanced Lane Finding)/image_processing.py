@@ -99,47 +99,67 @@ def window_mask(width, height, img_ref, center, level):
     output[int(img_ref.shape[0]-(level+1)*height):int(img_ref.shape[0]-level*height),max(0,int(center-width)):min(int(center+width),img_ref.shape[1])] = 1
     return output
 
+# Apply undistortion on the image
+def undistort_image(img_name):
+    # read an image
+    img = cv2.imread(fname)
+
+    #undistort the image
+    img = cv2.undistort(img, mtx, dist, None, mtx)
+    return img
+
+
+# Apply a process on image and generate binary pixel of interests
+def preprocessed_image(img):
+    preprocessed_img = np.zeros_like(img[:,:,0])
+    grad_x = abs_sobel_thresh(img, orient='x', thresh_min=12, thresh_max=255)
+    grad_y = abs_sobel_thresh(img, orient='y', thresh_min=25, thresh_max=255)
+    c_binary = colour_threshold(img, sthresh=(150, 255), vthresh=(50, 255))
+    
+    mag_binary = mag_thresh(img, sobel_kernel=9, mag_thresh=(30, 100))
+    dir_binary = dir_threshold(img, sobel_kernel=15, thresh=(0.7, 1.3))
+    #preprocessed_img[( (grad_x == 1) & (grad_y == 1) | (c_binary == 1) )] = 255
+    preprocessed_img[( (grad_x == 1) & (grad_y == 1) ) | (c_binary==1) | ((mag_binary==1) & (dir_binary==1))] = 255
+    return preprocessed_img
+    
+# Work on defining perspective transformation area
+# Perform the transform
+def transform_to_bird_eye_view(img, processed_img):
+    # Work on defining perspective transformation area
+    img_size = (img.shape[1], img.shape[0])
+    bot_width = 0.76 # percent of bottom trapezoid height
+    mid_width = 0.08 # percent of middle trapezoid height
+    height_pct = 0.62 # percent for trapezoid height
+    bottom_trim = 0.935 # percent from top to bottom to avoid car hood
+    src = np.float32([[img.shape[1]*(0.5-mid_width/2), img.shape[0]*height_pct], [img.shape[1]*(0.5+mid_width/2), img.shape[0]*height_pct], 
+                    [img.shape[1]*(0.5+bot_width/2), img.shape[0]*bottom_trim], [img.shape[1]*(0.5-bot_width/2),  img.shape[0]*bottom_trim]])
+    offset = img_size[0]*0.25
+    dst = np.float32([[offset, 0], [img_size[0]-offset, 0], [img_size[0]-offset, img_size[1]], [offset, img_size[1]]])
+
+    # perform the transform
+    M = cv2.getPerspectiveTransform(src, dst)
+    Minv = cv2.getPerspectiveTransform(dst,src)
+    warped = cv2.warpPerspective(preprocessed_img, M, img_size, flags=cv2.INTER_LINEAR)
+
+    return warped, Minv, img_size
+
 if __name__ == '__main__':
     images = glob.glob('./test_images/test*.jpg')
 
     for idx, fname in tqdm(enumerate(images)):
-        # read an image
-        img = cv2.imread(fname)
-
+        
         #undistort the image
-        img = cv2.undistort(img, mtx, dist, None, mtx)
+        img = undistort_image(fname)
 
         # process image and generate binary pixel of interests
-        preprocessed_img = np.zeros_like(img[:,:,0])
-        grad_x = abs_sobel_thresh(img, orient='x', thresh_min=12, thresh_max=255)
-        grad_y = abs_sobel_thresh(img, orient='y', thresh_min=25, thresh_max=255)
-        c_binary = colour_threshold(img, sthresh=(150, 255), vthresh=(50, 255))
-        
-        mag_binary = mag_thresh(img, sobel_kernel=9, mag_thresh=(30, 100))
-        dir_binary = dir_threshold(img, sobel_kernel=15, thresh=(0.7, 1.3))
-        #preprocessed_img[( (grad_x == 1) & (grad_y == 1) | (c_binary == 1) )] = 255
-        preprocessed_img[( (grad_x == 1) & (grad_y == 1) ) | (c_binary==1) | ((mag_binary==1) & (dir_binary==1))] = 255
-
+        preprocessed_img = preprocessed_image(img)
         result = preprocessed_img
         write_name = './test_images/1. preprocessed_img' + str(idx+1) + '.jpg'
         cv2.imwrite(write_name, result)
 
         # work on defining perspective transformation area
-        img_size = (img.shape[1], img.shape[0])
-        bot_width = 0.76 # percent of bottom trapezoid height
-        mid_width = 0.08 # percent of middle trapezoid height
-        height_pct = 0.62 # percent for trapezoid height
-        bottom_trim = 0.935 # percent from top to bottom to avoid car hood
-        src = np.float32([[img.shape[1]*(0.5-mid_width/2), img.shape[0]*height_pct], [img.shape[1]*(0.5+mid_width/2), img.shape[0]*height_pct], 
-                        [img.shape[1]*(0.5+bot_width/2), img.shape[0]*bottom_trim], [img.shape[1]*(0.5-bot_width/2),  img.shape[0]*bottom_trim]])
-        offset = img_size[0]*0.25
-        dst = np.float32([[offset, 0], [img_size[0]-offset, 0], [img_size[0]-offset, img_size[1]], [offset, img_size[1]]])
-
         # perform the transform
-        M = cv2.getPerspectiveTransform(src, dst)
-        Minv = cv2.getPerspectiveTransform(dst,src)
-        warped = cv2.warpPerspective(preprocessed_img, M, img_size, flags=cv2.INTER_LINEAR)
-
+        warped, Minv, img_size = transform_to_bird_eye_view(img, preprocessed_img)
         result = warped
         write_name = './test_images/2. warped' + str(idx+1) + '.jpg'
         cv2.imwrite(write_name, result)
