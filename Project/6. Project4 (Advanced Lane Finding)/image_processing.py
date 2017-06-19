@@ -127,14 +127,31 @@ def preprocessed_image(img):
 def transform_to_bird_eye_view(img, processed_img):
     # Work on defining perspective transformation area
     img_size = (img.shape[1], img.shape[0])
-    bot_width = 0.76 # percent of bottom trapezoid height
-    mid_width = 0.08 # percent of middle trapezoid height
-    height_pct = 0.62 # percent for trapezoid height
-    bottom_trim = 0.935 # percent from top to bottom to avoid car hood
-    src = np.float32([[img.shape[1]*(0.5-mid_width/2), img.shape[0]*height_pct], [img.shape[1]*(0.5+mid_width/2), img.shape[0]*height_pct], 
-                    [img.shape[1]*(0.5+bot_width/2), img.shape[0]*bottom_trim], [img.shape[1]*(0.5-bot_width/2),  img.shape[0]*bottom_trim]])
-    offset = img_size[0]*0.25
-    dst = np.float32([[offset, 0], [img_size[0]-offset, 0], [img_size[0]-offset, img_size[1]], [offset, img_size[1]]])
+    bot_width = 0.38 # percent of bottom trapezoid height
+    mid_width = 0.05 # percent of middle trapezoid height
+    height_pct = 0.62#0.62 # percent for trapezoid height
+    bottom_trim = 0.935#0.935 # percent from top to bottom to avoid car hood
+    src = np.float32([[img.shape[1]*(0.5-mid_width), img.shape[0]*height_pct], [img.shape[1]*(0.5+mid_width), img.shape[0]*height_pct], 
+                    [img.shape[1]*(0.5+bot_width), img.shape[0]*bottom_trim], [img.shape[1]*(0.5-bot_width),  img.shape[0]*bottom_trim]])
+    
+    
+    print(np.int32(src[0]), np.int32(src[3]))
+    cv2.polylines(img,np.int32([src]),True,(0,255,0), thickness=2)
+
+    '''
+    write_name = './test_images/1. src' + str(idx+1) + '.jpg'
+    cv2.imwrite(write_name, img)
+    '''
+
+    offset = img_size[0]*0.12
+    #dst = np.float32([[offset, 0], [img_size[0]-offset, 0], [img_size[0]-offset, img_size[1]], [offset, img_size[1]]])
+    dst = np.float32([[offset, img_size[1]*0.1], [img_size[0]-offset, img_size[1]*0.1], [img_size[0]-offset, img_size[1]], [offset, img_size[1]]])
+
+    print(np.int32(src[0]), np.int32(src[3]))
+    cv2.polylines(img,np.int32([dst]),True,(0,0,255), thickness=3)
+
+    write_name = './test_images/1. dst' + str(idx+1) + '.jpg'
+    cv2.imwrite(write_name, img)
 
     # perform the transform
     M = cv2.getPerspectiveTransform(src, dst)
@@ -154,8 +171,8 @@ if __name__ == '__main__':
         # process image and generate binary pixel of interests
         preprocessed_img = preprocessed_image(img)
         result = preprocessed_img
-        write_name = './test_images/1. preprocessed_img' + str(idx+1) + '.jpg'
-        cv2.imwrite(write_name, result)
+        #write_name = './test_images/1. preprocessed_img' + str(idx+1) + '.jpg'
+        #cv2.imwrite(write_name, result)
 
         # work on defining perspective transformation area
         # perform the transform
@@ -236,8 +253,8 @@ if __name__ == '__main__':
 
         base = cv2.addWeighted(img, 1.0, road_warped_bkg, -1.0, 0.0)
         result = cv2.addWeighted(base, 1.0, road_warped, 0.7, 0.0)
-        write_name = './test_images/4. road_warped' + str(idx+1) + '.jpg'
-        cv2.imwrite(write_name, result)
+        #write_name = './test_images/4. road_warped' + str(idx+1) + '.jpg'
+        #cv2.imwrite(write_name, result)
 
         ym_per_pix = curve_centres.ym_per_pix # metres per pixel in y dimension
         xm_per_pix = curve_centres.xm_per_pix # metres per pixel in x dimension
