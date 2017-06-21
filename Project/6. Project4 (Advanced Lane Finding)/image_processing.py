@@ -281,7 +281,7 @@ if __name__ == '__main__':
         # fit the lane boundaries to the left, right centre positions found
         y_vals = range(0, warped.shape[0])
         #res_y_vals = np.arange(warped.shape[0]-(window_height/2), 0, -window_height)
-        res_y_vals = np.linspace(warped.shape[0]-(window_height/2), 200, len(window_centroids))
+        res_y_vals = np.linspace(warped.shape[0]-(window_height/2), 100, len(window_centroids))
         #print(len(res_y_vals))
         #np.arange(200, warped.shape[0]-(window_height/2), window_height)
         #print('res_y_vals:', len(res_y_vals))

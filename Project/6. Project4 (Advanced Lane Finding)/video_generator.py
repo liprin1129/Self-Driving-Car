@@ -75,25 +75,49 @@ def dir_threshold(img, sobel_kernel=3, thresh=(0, np.pi/2)):
     return binary_output
 
 # Appies Colour threshold
-def colour_threshold(img, sthresh=(10, 255), hthresh=(100, 200)):
+def colour_threshold(img, sthresh=(100, 255), hthresh=(60, 120), bthresh=(0, 250), lthresh=(130, 255)):
     
-    hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
+    hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS) 
+
     h_channel = hls[:,:,0]
-    s_channel = hls[:,:,2]
-    
-    h_binary = np.zeros_like(s_channel)
+    h_binary = np.zeros_like(h_channel)
     h_binary[(h_channel >= hthresh[0]) & (h_channel <= hthresh[1])] = 1
-    s_binary = np.zeros_like(s_channel)
+
+    #output_1 = h_channel.copy()
+    #output_1[(h_binary == 1)] = 255
+    #write_name = './test_images/h_h' + str(idx+1) + '.jpg'
+    #cv2.imwrite(write_name, output_1)
+    
+    l_channel = hls[:,:,1]
+    l_binary = np.zeros_like(l_channel)
+    l_binary[(l_channel >= lthresh[0]) & (l_channel <= lthresh[1])] = 1
+    
+    #output_1 = np.zeros_like(l_channel)
+    #output_1[(l_binary == 1)] = 255
+    #write_name = './test_images/h_l' + str(idx+1) + '.jpg'
+    #cv2.imwrite(write_name, output_1)
+    
+    s_channel = hls[:,:,2]
+    s_binary = np.zeros_like(s_channel, dtype=np.uint8)
     s_binary[(s_channel >= sthresh[0]) & (s_channel <= sthresh[1])] = 1
-    '''
-    hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-    v_channel = hsv[:,:,2]
-    v_binary = np.zeros_like(v_channel)
-    v_binary[(v_channel >= vthresh[0]) & (v_channel <= vthresh[1])] = 1
-    '''
-    output = np.zeros_like(s_channel)
-    #output[(s_binary == 1) & (v_binary == 1) & (h_binary == 1)] = 1
-    output[(s_binary == 1)  & (h_binary == 1)] = 1
+
+    #output_1 = np.zeros_like(l_channel)
+    #output_1[(s_binary == 1)] = 255
+    #write_name = './test_images/h_s' + str(idx+1) + '.jpg'
+    #cv2.imwrite(write_name, output_1)
+
+    #hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+    #v_binary = hsv[:,:,2]
+    #v_binary = np.zeros_like(v_channel)
+    #v_binary[(v_channel >= vthresh[0]) & (v_channel <= vthresh[1])] = 1
+
+    #write_name = './test_images/v' + str(idx+1) + '.jpg'
+    #cv2.imwrite(write_name, v_binary)
+    
+    output = np.zeros_like(h_channel)
+    output[(h_binary == 1) & (s_binary == 1) & (l_binary == 1)] = 1
+    #write_name = './test_images/output_colour' + str(idx+1) + '.jpg'
+    #cv2.imwrite(write_name, output)
     return output
 
 
@@ -122,8 +146,8 @@ def preprocessed_image(img):
     
     mag_binary = mag_thresh(img, sobel_kernel=9, mag_thresh=(30, 100))
     dir_binary = dir_threshold(img, sobel_kernel=15, thresh=(0.7, 1.3))
-    #preprocessed_img[( (grad_x == 1) & (grad_y == 1) | (c_binary == 1) )] = 255
-    preprocessed_img[( (grad_x == 1) & (grad_y == 1) )  | (c_binary==1) | ((mag_binary==1) & (dir_binary==1))] = 255
+    preprocessed_img[((dir_binary==1) & (c_binary==1) | ((grad_x == 1) & (grad_y == 1))) | (c_binary==1) ] = 255
+    #preprocessed_img[( (grad_x == 1) & (grad_y == 1) )  | (c_binary==1) | ((mag_binary==1) & (dir_binary==1))] = 255
     return preprocessed_img
     
 # Work on defining perspective transformation area
