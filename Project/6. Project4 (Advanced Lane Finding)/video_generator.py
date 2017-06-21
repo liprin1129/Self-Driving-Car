@@ -75,27 +75,21 @@ def dir_threshold(img, sobel_kernel=3, thresh=(0, np.pi/2)):
     return binary_output
 
 # Appies Colour threshold
-def colour_threshold(img, sthresh=(100, 255), hthresh=(60, 120), bthresh=(0, 250), lthresh=(130, 255)):
-    
-    hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS) 
+def colour_threshold(img, sthresh=(100, 255), hthresh=(60, 120), lthresh=(130, 255), vthresh=(0, 250)):
+    hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
+    s_channel = hls[:,:,2]
+    s_binary = np.zeros_like(s_channel)
+    s_binary[(s_channel >= sthresh[0]) & (s_channel <= sthresh[1])] = 1
 
-    h_channel = hls[:,:,0]
-    h_binary = np.zeros_like(h_channel)
-    h_binary[(h_channel >= hthresh[0]) & (h_channel <= hthresh[1])] = 1
+    hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+    v_channel = hsv[:,:,2]
+    v_binary = np.zeros_like(v_channel)
+    v_binary[(v_channel >= vthresh[0]) & (v_channel <= vthresh[1])] = 1
 
-    #output_1 = h_channel.copy()
-    #output_1[(h_binary == 1)] = 255
-    #write_name = './test_images/h_h' + str(idx+1) + '.jpg'
-    #cv2.imwrite(write_name, output_1)
-    
-    l_channel = hls[:,:,1]
-    l_binary = np.zeros_like(l_channel)
-    l_binary[(l_channel >= lthresh[0]) & (l_channel <= lthresh[1])] = 1
-    
-    #output_1 = np.zeros_like(l_channel)
-    #output_1[(l_binary == 1)] = 255
-    #write_name = './test_images/h_l' + str(idx+1) + '.jpg'
-    #cv2.imwrite(write_name, output_1)
+    output = np.zeros_like(s_channel)
+    #output[(s_binary == 1) & (v_binary == 1)] = 1
+    output[(s_binary == 1)] = 1
+    return output
     
     s_channel = hls[:,:,2]
     s_binary = np.zeros_like(s_channel, dtype=np.uint8)
@@ -142,7 +136,8 @@ def preprocessed_image(img):
     grad_x = abs_sobel_thresh(img, orient='x', thresh_min=50, thresh_max=100)
     grad_y = abs_sobel_thresh(img, orient='y', thresh_min=50, thresh_max=100)
     
-    c_binary = colour_threshold(img, sthresh=(90, 170), hthresh=(100, 200))
+    #c_binary = colour_threshold(img, sthresh=(90, 170), hthresh=(100, 200))
+    c_binary = colour_threshold(img, sthresh=(150, 255), vthresh=(50, 255))
     
     mag_binary = mag_thresh(img, sobel_kernel=9, mag_thresh=(30, 100))
     dir_binary = dir_threshold(img, sobel_kernel=15, thresh=(0.7, 1.3))
@@ -153,20 +148,16 @@ def preprocessed_image(img):
 # Work on defining perspective transformation area
 # Perform the transform
 def transform_to_bird_eye_view(img, processed_img):
-    # Work on defining perspective transformation area
+    # work on defining perspective transformation area
     img_size = (img.shape[1], img.shape[0])
-    bot_width = 0.28#0.28 # percent of bottom trapezoid height
-    mid_width = 0.038#0.04 # percent of middle trapezoid height
-    height_pct = 0.62#0.62 # percent for trapezoid height
-    bottom_trim = 0.935#0.935 # percent from top to bottom to avoid car hood
-    src = np.float32([[img.shape[1]*(0.5-mid_width), img.shape[0]*height_pct], [img.shape[1]*(0.5+mid_width), img.shape[0]*height_pct], 
-                    [img.shape[1]*(0.5+bot_width), img.shape[0]*bottom_trim], [img.shape[1]*(0.5-bot_width),  img.shape[0]*bottom_trim]])
-    
-    #cv2.polylines(img,np.int32([src]),True,(0,255,0), thickness=2)
-
-    offset = img_size[0]*0.2
+    bot_width = 0.76 # percent of bottom trapezoid height
+    mid_width = 0.08 # percent of middle trapezoid height
+    height_pct = 0.62 # percent for trapezoid height
+    bottom_trim = 0.935 # percent from top to bottom to avoid car hood
+    src = np.float32([[img.shape[1]*(0.5-mid_width/2), img.shape[0]*height_pct], [img.shape[1]*(0.5+mid_width/2), img.shape[0]*height_pct], 
+                    [img.shape[1]*(0.5+bot_width/2), img.shape[0]*bottom_trim], [img.shape[1]*(0.5-bot_width/2),  img.shape[0]*bottom_trim]])
+    offset = img_size[0]*0.25
     dst = np.float32([[offset, 0], [img_size[0]-offset, 0], [img_size[0]-offset, img_size[1]], [offset, img_size[1]]])
-    #dst = np.float32([[offset, img_size[1]*0], [img_size[0]-offset, img_size[1]*0], [img_size[0]-offset, img_size[1]], [offset, img_size[1]]])
     
     #cv2.polylines(img,np.int32([dst]),True,(255,0,0), thickness=2)
     #write_name = './test_images/1. dst' + str(idx+1) + '.jpg'

@@ -76,47 +76,47 @@ def dir_threshold(img, sobel_kernel=3, thresh=(0, np.pi/2)):
     return binary_output
 
 # Appies Colour threshold
-def colour_threshold(img, sthresh=(100, 255), hthresh=(60, 120), bthresh=(0, 250), lthresh=(130, 255)):
+def colour_threshold(img, sthresh=(100, 255), hthresh=(60, 120), bthresh=(0, 250), lthresh=(120, 200)):
     
-    hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS) 
+    s_channel = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)[:,:,2]
 
-    h_channel = hls[:,:,0]
-    h_binary = np.zeros_like(h_channel)
-    h_binary[(h_channel >= hthresh[0]) & (h_channel <= hthresh[1])] = 1
+    # Threshold color channel
+    s_thresh_min = 180
+    s_thresh_max = 255
+    s_binary = np.zeros_like(s_channel)
+    s_binary[(s_channel >= s_thresh_min) & (s_channel <= s_thresh_max)] = 1
 
-    #output_1 = h_channel.copy()
-    #output_1[(h_binary == 1)] = 255
-    #write_name = './test_images/h_h' + str(idx+1) + '.jpg'
+    #output_1 = s_channel.copy()
+    #output_1[(s_binary == 1)] = 255
+    #write_name = './test_images/binary_s' + str(idx+1) + '.jpg'
     #cv2.imwrite(write_name, output_1)
     
-    l_channel = hls[:,:,1]
-    l_binary = np.zeros_like(l_channel)
-    l_binary[(l_channel >= lthresh[0]) & (l_channel <= lthresh[1])] = 1
+    b_channel = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)[:,:,2]
     
+    b_thresh_min = 155
+    b_thresh_max = 200
+    b_binary = np.zeros_like(b_channel)
+    b_binary[(b_channel >= b_thresh_min) & (b_channel <= b_thresh_max)] = 1
+
+    #output_1 = np.zeros_like(b_channel)
+    #output_1[(b_binary == 1)] = 255
+    #write_name = './test_images/binary_b' + str(idx+1) + '.jpg'
+    #cv2.imwrite(write_name, output_1)
+    
+    l_channel = cv2.cvtColor(img, cv2.COLOR_BGR2LUV)[:,:,0]
+
+    l_thresh_min = 225
+    l_thresh_max = 255
+    l_binary = np.zeros_like(l_channel)
+    l_binary[(l_channel >= l_thresh_min) & (l_channel <= l_thresh_max)] = 1
+
     #output_1 = np.zeros_like(l_channel)
     #output_1[(l_binary == 1)] = 255
-    #write_name = './test_images/h_l' + str(idx+1) + '.jpg'
+    #write_name = './test_images/binary_l' + str(idx+1) + '.jpg'
     #cv2.imwrite(write_name, output_1)
     
-    s_channel = hls[:,:,2]
-    s_binary = np.zeros_like(s_channel, dtype=np.uint8)
-    s_binary[(s_channel >= sthresh[0]) & (s_channel <= sthresh[1])] = 1
-
-    #output_1 = np.zeros_like(l_channel)
-    #output_1[(s_binary == 1)] = 255
-    #write_name = './test_images/h_s' + str(idx+1) + '.jpg'
-    #cv2.imwrite(write_name, output_1)
-
-    #hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-    #v_binary = hsv[:,:,2]
-    #v_binary = np.zeros_like(v_channel)
-    #v_binary[(v_channel >= vthresh[0]) & (v_channel <= vthresh[1])] = 1
-
-    #write_name = './test_images/v' + str(idx+1) + '.jpg'
-    #cv2.imwrite(write_name, v_binary)
-    
-    output = np.zeros_like(h_channel)
-    output[(h_binary == 1) & (s_binary == 1) & (l_binary == 1)] = 1
+    output = np.zeros_like(l_channel)
+    output[(s_binary == 1) | (b_binary == 1) | (l_binary == 1)] = 1
     #write_name = './test_images/output_colour' + str(idx+1) + '.jpg'
     #cv2.imwrite(write_name, output)
     return output
@@ -146,13 +146,17 @@ def preprocessed_image(img):
     grad_y = abs_sobel_thresh(img, orient='y', thresh_min=40, thresh_max=80)
     
     #output = np.zeros_like(img[:,:,0])
-    #output[(grad_x==1)] = 255
+    #output[(grad_x==1) & (grad_y == 1)] = 255
     #write_name = './test_images/output_grad_x' + str(idx+1) + '.jpg'
     #cv2.imwrite(write_name, output)
 
     c_binary = colour_threshold(img)
-    
-    mag_binary = mag_thresh(img, sobel_kernel=9, mag_thresh=(30, 100))
+    #output = np.zeros_like(img[:,:,0])
+    #output[c_binary==1] = 255
+    #write_name = './test_images/colour' + str(idx+1) + '.jpg'
+    #cv2.imwrite(write_name, output)
+
+    mag_binary = mag_thresh(img, sobel_kernel=9, mag_thresh=(40, 80))
     
     #output = np.zeros_like(img[:,:,0])
     #output[mag_binary == 1] = 255
@@ -162,11 +166,11 @@ def preprocessed_image(img):
     dir_binary = dir_threshold(img, sobel_kernel=15, thresh=(40*np.pi/180, 80*np.pi/180))
     
     #output = np.zeros_like(img[:,:,0])
-    #output[dir_binary == 1] = 255
-    #write_name = './test_images/output_dir' + str(idx+1) + '.jpg'
+    #output[(dir_binary==1) | (mag_binary==1) | ((grad_x == 1)&(grad_y==1))] = 255
+    #write_name = './test_images/gradient' + str(idx+1) + '.jpg'
     #cv2.imwrite(write_name, output)
 
-    preprocessed_img[((dir_binary==1) & (c_binary==1) | ((grad_x == 1) & (grad_y == 1))) | (c_binary==1) ] = 255
+    preprocessed_img[((dir_binary==1) | (mag_binary==1) | ((grad_x == 1)&(grad_y==1))) & (c_binary==1)] = 255
     return preprocessed_img
     
 # Work on defining perspective transformation area
@@ -174,9 +178,9 @@ def preprocessed_image(img):
 def transform_to_bird_eye_view(img, processed_img):
     # Work on defining perspective transformation area
     img_size = (img.shape[1], img.shape[0])
-    bot_width = 0.28#0.28 # percent of bottom trapezoid height
-    mid_width = 0.038#0.05 # percent of middle trapezoid height
-    height_pct = 0.63#0.62 # percent for trapezoid height
+    bot_width = 0.45#0.28 # percent of bottom trapezoid width
+    mid_width = 0.12#0.05 # percent of middle trapezoid width
+    height_pct = 0.66#0.62 # percent for trapezoid height
     bottom_trim = 0.935#0.935 # percent from top to bottom to avoid car hood
     
     #src = np.float32([[490, 482],[810, 482],
@@ -184,12 +188,12 @@ def transform_to_bird_eye_view(img, processed_img):
     #dst = np.float32([[0, 0], [1280, 0], 
     #                 [1250, 720],[40, 720]])
 
-    src = np.float32([[img.shape[1]*(0.5-mid_width), img.shape[0]*height_pct], [img.shape[1]*(0.5+mid_width), img.shape[0]*height_pct], 
-                    [img.shape[1]*(0.5+bot_width), img.shape[0]*bottom_trim], [img.shape[1]*(0.5-bot_width),  img.shape[0]*bottom_trim]])
+    src = np.float32([[img_size[0]*(0.5-mid_width), img_size[1]*height_pct], [img_size[0]*(0.5+mid_width), img_size[1]*height_pct], 
+                      [img_size[0]*(0.5+bot_width), img_size[1]*bottom_trim], [img_size[0]*(0.5-bot_width),  img_size[1]*bottom_trim]])
     
     cv2.polylines(img,np.int32([src]),True,(0,255,0), thickness=2)
 
-    offset = img_size[0]*0.23
+    offset = img_size[0]*0.22
     dst = np.float32([[offset, 0], [img_size[0]-offset, 0], [img_size[0]-offset, img_size[1]], [offset, img_size[1]]])
     
     cv2.polylines(img,np.int32([dst]),True,(255,0,0), thickness=2)
@@ -218,28 +222,24 @@ if __name__ == '__main__':
 
         # process image and generate binary pixel of interests
         preprocessed_img = preprocessed_image(img)
-        result = preprocessed_img
-        write_name = './test_images/1. preprocessed_img' + str(idx+1) + '.jpg'
-        cv2.imwrite(write_name, result)
+        #result = preprocessed_img
+        #write_name = './test_images/1. preprocessed_img' + str(idx+1) + '.jpg'
+        #cv2.imwrite(write_name, result)
 
         # work on defining perspective transformation area
         # perform the transform
         warped, Minv, img_size = transform_to_bird_eye_view(img, preprocessed_img)
-        result = warped
-        write_name = './test_images/2. warped' + str(idx+1) + '.jpg'
-        cv2.imwrite(write_name, result)
+        #result = warped
+        #write_name = './test_images/2. warped' + str(idx+1) + '.jpg'
+        #cv2.imwrite(write_name, result)
 
         window_width = 60
         window_height = 70
         # set the overall class to do all the tracking
         curve_centres = tracker(my_window_width=window_width, my_window_height=window_height, my_margin=25, my_ym = 10/720, my_xm = 4/384 , my_smooth_factor = 15)
 
-        #####################################
-        left_right = int(warped.shape[1]/2)
-        up_half = int(warped.shape[0]/2)
-        print(np.sum(warped[:up_half, :left_right]), np.sum(warped[up_half:, left_right:]))
-            
         window_centroids = curve_centres.find_window_centroids(warped)
+
         # Points used to draw all the left and right windows
         l_points = np.zeros_like(warped)
         r_points = np.zeros_like(warped)
@@ -281,7 +281,7 @@ if __name__ == '__main__':
         # fit the lane boundaries to the left, right centre positions found
         y_vals = range(0, warped.shape[0])
         #res_y_vals = np.arange(warped.shape[0]-(window_height/2), 0, -window_height)
-        res_y_vals = np.linspace(warped.shape[0]-(window_height/2), 100, len(window_centroids))
+        res_y_vals = np.linspace(warped.shape[0]-(window_height/2), 200, len(window_centroids))
         #print(len(res_y_vals))
         #np.arange(200, warped.shape[0]-(window_height/2), window_height)
         #print('res_y_vals:', len(res_y_vals))
@@ -299,7 +299,7 @@ if __name__ == '__main__':
         left_lane = np.array(list(zip(np.concatenate((left_fit_x-window_width/2, left_fit_x[::-1]+window_width/2), axis=0), np.concatenate((y_vals, y_vals[::-1]), axis=0))), np.int32)
         right_lane = np.array(list(zip(np.concatenate((right_fit_x-window_width/2, right_fit_x[::-1]+window_width/2), axis=0), np.concatenate((y_vals, y_vals[::-1]), axis=0))), np.int32)
         #middle_marker = np.array(list(zip(np.concatenate((right_fit_x-window_width/2, right_fit_x[::-1]+window_width/2), axis=0), np.concatenate((y_vals, y_vals[::-1]), axis=0))), np.int32)
-        inner_lane = np.array(list(zip(np.concatenate((left_fit_x-window_width/2, right_fit_x[::-1]+window_width/2), axis=0), np.concatenate((y_vals, y_vals[::-1]), axis=0))), np.int32)
+        inner_lane = np.array(list(zip(np.concatenate((left_fit_x-window_width/2, right_fit_x[::-1]+window_width/2), axis=0), np.concatenate((y_vals, y_vals[::-1]), axis=0))), np.int32)   
         
         road = np.zeros_like(img)
         road_bkg = np.zeros_like(img)
@@ -320,6 +320,13 @@ if __name__ == '__main__':
         ym_per_pix = curve_centres.ym_per_pix # metres per pixel in y dimension
         xm_per_pix = curve_centres.xm_per_pix # metres per pixel in x dimension
 
+        #curve_fit_cr = np.polyfit(np.array(res_y_vals, np.float32)*ym_per_pix, np.array(left_x, np.float32)*xm_per_pix, 2)
+        #print(curve_fit_cr)
+        #print('a:', (1 + (2*curve_fit_cr[0]*y_vals[-1]*ym_per_pix + curve_fit_cr[1]**2)**1.5), np.absolute(2*curve_fit_cr[0]))
+        #print('b:', np.float64(1 + (2*curve_fit_cr[0]*y_vals[-1]*ym_per_pix + curve_fit_cr[1]**2)**1.5))
+        #curverad = ((1 + (2*curve_fit_cr[0]*y_vals[-1]*ym_per_pix + curve_fit_cr[1]**2)**1.5)/np.absolute(2*curve_fit_cr[0]))
+        #print('c:', curverad)
+
         # Fit new polynomials to x,y in world space
         left_fit_cr = np.polyfit(np.array(res_y_vals, np.float32)*ym_per_pix, np.array(left_x, np.float32)*xm_per_pix, 2)
         right_fit_cr = np.polyfit(np.array(res_y_vals, np.float32)*ym_per_pix, np.array(right_x, np.float32)*xm_per_pix, 2)
@@ -339,5 +346,5 @@ if __name__ == '__main__':
         cv2.putText(result, 'Radius of Curvature = ' + str(round(curverad, 3)) + '(m)', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
         cv2.putText(result, 'Vehicle is ' + str(abs(round(centre_diff, 3))) + 'm ' + side_pos + ' of centre', (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-        write_name = './test_images/5. tracked' + str(idx+1) + '.jpg'
-        cv2.imwrite(write_name, result)
+        #write_name = './test_images/5. tracked' + str(idx+1) + '.jpg'
+        #cv2.imwrite(write_name, result)
