@@ -75,20 +75,49 @@ def dir_threshold(img, sobel_kernel=3, thresh=(0, np.pi/2)):
     return binary_output
 
 # Appies Colour threshold
-def colour_threshold(img, sthresh=(0, 255), vthresh=(0, 255)):
+def colour_threshold(img, hthresh=(80,102), sthresh=(200, 255), lthresh=(230,255), vthresh=(220, 255), bthresh=(155,200)):
 
     hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
+    
+    h_channel = hls[:,:,0]
+    h_binary = np.zeros_like(h_channel)
+    h_binary[(h_channel >= hthresh[0]) & (h_channel <= hthresh[1])] = 1
+    
     s_channel = hls[:,:,2]
     s_binary = np.zeros_like(s_channel)
     s_binary[(s_channel >= sthresh[0]) & (s_channel <= sthresh[1])] = 1
 
+    l_channel = hls[:,:,1]
+    l_binary = np.zeros_like(l_channel)
+    l_binary[(l_channel >= lthresh[0]) & (l_channel <= lthresh[1])] = 1
+
     hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-    v_channel = hls[:,:,2]
+    v_channel = hsv[:,:,2]
     v_binary = np.zeros_like(v_channel)
     v_binary[(v_channel >= vthresh[0]) & (v_channel <= vthresh[1])] = 1
 
+    b_channel = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)[:,:,2]
+    b_binary = np.zeros_like(b_channel)
+    b_binary[(b_channel >= bthresh[0]) & (b_channel <= bthresh[1])] = 1
+
     output = np.zeros_like(s_channel)
-    output[(s_binary == 1) & (v_binary == 1)] = 1
+    output[h_binary == 1] = 255
+    write_name = './test_images/binary_h' + str(idx+1) + '.jpg'
+    cv2.imwrite(write_name, output)
+
+    output = np.zeros_like(s_channel)
+    output[s_binary == 1] = 255
+    write_name = './test_images/binary_s' + str(idx+1) + '.jpg'
+    cv2.imwrite(write_name, output)
+
+    output = np.zeros_like(s_channel)
+    output[v_binary == 1] = 255
+    write_name = './test_images/binary_v' + str(idx+1) + '.jpg'
+    cv2.imwrite(write_name, output)
+
+    output = np.zeros_like(s_channel)
+    output[(h_binary==1) | (s_binary == 1) | (l_binary == 1) | (v_binary == 1) | (b_binary==1)] = 1
+    #output[(l_binary==1) | (b_binary==1)]=1
     return output
 
 
@@ -109,45 +138,50 @@ if __name__ == '__main__':
         #undistort the image
         img = cv2.undistort(img, mtx, dist, None, mtx)
 
+        # process image and generate binary pixel of interests
+        preprocessed_img = np.zeros_like(img[:,:,0])
+        grad_x = abs_sobel_thresh(img, orient='x', thresh_min=20, thresh_max=100) #12, 255
+        grad_y = abs_sobel_thresh(img, orient='y', thresh_min=20, thresh_max=100) #25, 255
+        c_binary = colour_threshold(img)
+        
+        mag_binary = mag_thresh(img, sobel_kernel=9, mag_thresh=(30, 80))
+        dir_binary = dir_threshold(img, sobel_kernel=15, thresh=(50*np.pi/180, 80*np.pi/180))
+        preprocessed_img[ ((grad_x == 1) & (grad_y == 1) | (mag_binary == 1) & (dir_binary==1)) | (c_binary == 1) ] = 255
+        #preprocessed_img[( (grad_x == 1) & (grad_y == 1) | (c_binary == 1) )] = 255
+
+        result = preprocessed_img
+        write_name = './test_images/1. preprocessed_img' + str(idx+1) + '.jpg'
+        cv2.imwrite(write_name, result)
+
         # work on defining perspective transformation area
         img_size = (img.shape[1], img.shape[0])
-        bot_width = 0.76 # percent of bottom trapezoid height
-        mid_width = 0.08 # percent of middle trapezoid height
-        height_pct = 0.62 # percent for trapezoid height
-        bottom_trim = 0.935 # percent from top to bottom to avoid car hood
+        bot_width = 0.45#0.4#0.8#0.76 # percent of bottom trapezoid height
+        mid_width = 0.12#0.04#0.2#0.08 # percent of middle trapezoid height
+        height_pct = 0.66#0.66#0.62 # percent for trapezoid height
+        bottom_trim = 0.935#0.935 # percent from top to bottom to avoid car hood
+
         src = np.float32([[img.shape[1]*(0.5-mid_width/2), img.shape[0]*height_pct], [img.shape[1]*(0.5+mid_width/2), img.shape[0]*height_pct], 
                         [img.shape[1]*(0.5+bot_width/2), img.shape[0]*bottom_trim], [img.shape[1]*(0.5-bot_width/2),  img.shape[0]*bottom_trim]])
-        offset = img_size[0]*0.25
+        
+        offset = img_size[0]*0.25#0.3#0.15#0.25
         dst = np.float32([[offset, 0], [img_size[0]-offset, 0], [img_size[0]-offset, img_size[1]], [offset, img_size[1]]])
-
+        '''
+        src = np.float32([[490, 482],[810, 482],
+                        [1250, 720],[40, 720]])
+        dst = np.float32([[0, 0], [1280, 0], 
+                        [1250, 720],[40, 720]])
+        '''
         # perform the transform
         M = cv2.getPerspectiveTransform(src, dst)
         Minv = cv2.getPerspectiveTransform(dst,src)
-        warped = cv2.warpPerspective(img, M, img_size, flags=cv2.INTER_LINEAR)
+        warped = cv2.warpPerspective(preprocessed_img, M, img_size, flags=cv2.INTER_LINEAR)
 
         result = warped
-        write_name = './test_images/1. warped' + str(idx+1) + '.jpg'
+        write_name = './test_images/2. warped' + str(idx+1) + '.jpg'
         cv2.imwrite(write_name, result)
 
-        # process image and generate binary pixel of interests
-        preprocessed_img = np.zeros_like(img[:,:,0])
-        grad_x = abs_sobel_thresh(warped, orient='x', thresh_min=12, thresh_max=255)
-        grad_y = abs_sobel_thresh(warped, orient='y', thresh_min=25, thresh_max=255)
-        #c_binary = colour_threshold(warped, sthresh=(80, 255), vthresh=(50, 255))
-        c_binary = colour_threshold(warped, sthresh=(80, 160), vthresh=(80, 160))
-        
-        mag_binary = mag_thresh(warped, sobel_kernel=9, mag_thresh=(80, 230))
-        #dir_binary = dir_threshold(warped, sobel_kernel=23, thresh=(45*np.pi/180, 90*np.pi/180))
-        #preprocessed_img[( (grad_x == 1) & (grad_y == 1) | (c_binary == 1) )] = 255
-        preprocessed_img[( (grad_x == 1) & (grad_y == 1) ) | (c_binary==1) | (mag_binary==1)] = 255
-
-        result = preprocessed_img
-        warped = preprocessed_img
-        write_name = './test_images/2. preprocessed_img' + str(idx+1) + '.jpg'
-        cv2.imwrite(write_name, result)
-
-        window_width = 25
-        window_height = 80
+        window_width = 25 # 30 #25
+        window_height = 80 # 60 #80
         # set the overall class to do all the tracking
         curve_centres = tracker(my_window_width=window_width, my_window_height=window_height, my_margin=25, my_ym = 10/720, my_xm = 4/384 , my_smooth_factor = 15)
 
