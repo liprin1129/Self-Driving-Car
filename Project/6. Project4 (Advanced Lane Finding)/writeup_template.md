@@ -29,6 +29,18 @@ The goals / steps of this project are the following:
 
 # Camera Calibration
 
+To correct a distortion an image, I implemented `camera calibration` on chessborad. This distortion occurs when 3D objects are transformed on a 2D image. For exmaple, `radial distortion` makes lines or objects appear more or less curved than their actual appearance in 3D space. `tangential distortion` affects that some objects appear farther away or closer than they actually are. Therefore, distiortion on 2D images has to be managed properly to get rid of it on images.
+
+For this, I used chessboard images on which I compute the distance between a point in a chessboard (object points) and the centre of the image idstortion which does not change through the transformation from 3D objects to 2D image. Then, I can compare the difference between the actual distance and the distance on an distorted image. After that, I can get coefficients (k1, k2, k3, p1, p2) needed to correct for the distortions.
+
+- Radial distortion correction
+<img src='examples/Radial Distortion Correction.png' width=300>
+
+- Tangential distortion correction
+<img src='examples/Tangential Distortion Correction.png' width=300>
+
+I start by preparing `object points`, which 
+
 #### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
 
 The code for this step is contained in the first code cell of the IPython notebook located in "./examples/example.ipynb" (or in lines # through # of the file called `some_file.py`).  
