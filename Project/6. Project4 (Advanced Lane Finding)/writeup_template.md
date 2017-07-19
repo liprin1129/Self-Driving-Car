@@ -39,7 +39,11 @@ For this, I used chessboard images on which I compute the distance between a poi
 - Tangential distortion correction
 <img src='examples/Tangential Distortion Correction.png' width=300>
 
-I start by preparing `object points`, which 
+I start by preparing `object points` which is on the (x, y, z) coordinates of corners on the chessboard in the actual 3D space. I used only (x, y) coordinates information, assuming a plane on the chessboard has a fixed z coordinate (z = 0) and moves on a xy plane. 
+
+Important input datas needed for camera calibration is a set of 3D real world points and its corresponding 2D image points. 2D image points are OK which we can easily find from the image. (These image points are locations where two black squares touch each other in chess boards)
+
+Now for X,Y values, we can simply pass the points as (0,0), (1,0), (2,0), ... which denotes the location of points. In this case, the results we get will be in the scale of size of chess board square. But if we know the square size, (say 30 mm), and we can pass the values as (0,0),(30,0),(60,0),..., we get the results in mm. (In this case, we don't know square size since we didn't take those images, so we pass in terms of square size).
 
 #### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
 
