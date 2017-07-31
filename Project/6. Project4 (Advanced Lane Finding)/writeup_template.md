@@ -27,35 +27,55 @@ The goals / steps of this project are the following:
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
 
-# Camera Calibration
+# Pipeline (single images)
 
-To correct a distortion an image, I implemented `camera calibration` on chessborad. This distortion occurs when 3D objects are transformed on a 2D image. For exmaple, `radial distortion` makes lines or objects appear more or less curved than their actual appearance in 3D space. `tangential distortion` affects that some objects appear farther away or closer than they actually are. Therefore, distiortion on 2D images has to be managed properly to get rid of it on images.
+I follow the pipeline as below. First I get camera calibration coefficient to undistort images/frames, then apply image processing. Next, I did some techniques to find lane lines. Finally, I visualise detected lane lines on images/frames. This is simply illustrated as below.
 
-For this, I used chessboard images on which I compute the distance between a point in a chessboard (object points) and the centre of the image idstortion which does not change through the transformation from 3D objects to 2D image. Then, I can compare the difference between the actual distance and the distance on an distorted image. After that, I can get coefficients (k1, k2, k3, p1, p2) needed to correct for the distortions.
+<img src='output_images/Pipeline/Pipeline.png' width = 800>
+
+1. Distortion Correction (Camera Calibration)
+
+To correct a distortion of images, I implemented `camera calibration` on chessborad. Didistortions occur when 3D objects are transformed on a 2D image. For exmaple, `radial distortion` makes lines or objects appear more or less curved than their actual appearance in 3D space. `tangential distortion` affects that some objects appear farther away or closer than they actually are. Therefore, distiortion on 2D images has to be managed properly to get rid of it on images.
+
+For this, I used chessboard images on which I compute the distance between a point in a chessboard (objpoints) and the centre of the image which does not change through the transformation from 3D objects to 2D image. What to be noted is that I do not know the actual size of the chessboard as well as the distance between balck and white grids, I simply pass the points as (0,0), (1,0), (2,0), ... to objpoints, which denote the location of points. I used only (x, y) coordinates information for object points, assuming a plane on the chessboard has a fixed z coordinate (z = 0) and moves on a xy plane. Then, I compare the difference between the actual distance and the distance on an distorted image. After that, I aquire coefficients (k1, k2, k3, p1, p2) needed to correct for the distortions. This is process under the equations as below.
 
 - Radial distortion correction
+
 <img src='examples/Radial Distortion Correction.png' width=300>
 
 - Tangential distortion correction
+
 <img src='examples/Tangential Distortion Correction.png' width=300>
 
-I start by preparing `object points` which is on the (x, y, z) coordinates of corners on the chessboard in the actual 3D space. I used only (x, y) coordinates information, assuming a plane on the chessboard has a fixed z coordinate (z = 0) and moves on a xy plane. 
+To demonstrate this step, I will describe how I apply the distortion correction to chessboard images.
 
-Important input datas needed for camera calibration is a set of 3D real world points and its corresponding 2D image points. 2D image points are OK which we can easily find from the image. (These image points are locations where two black squares touch each other in chess boards)
+ Images below is distorted chessboard images,
 
-Now for X,Y values, we can simply pass the points as (0,0), (1,0), (2,0), ... which denotes the location of points. In this case, the results we get will be in the scale of size of chess board square. But if we know the square size, (say 30 mm), and we can pass the values as (0,0),(30,0),(60,0),..., we get the results in mm. (In this case, we don't know square size since we didn't take those images, so we pass in terms of square size).
+ <img src='output_images/Distrted Image/Distorted Image 19.png' width = 500>
 
-#### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
+and these are corrected images.
 
-The code for this step is contained in the first code cell of the IPython notebook located in "./examples/example.ipynb" (or in lines # through # of the file called `some_file.py`).  
+<img src='output_images/Corrected Images/Corrected Image 19.png' width = 500>
 
-I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
+# Image Processing
 
-I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result: 
+To detect lane lines in an image/frame, I perform some image processing tasks to creat a thresholded binary image. The processing tasks are largely seperated into four parts; intensity sharpening, colour transform, gradient method, perspective transform. Then I combine all those tasks together and make an binary image/fram.
 
-![alt text][image1]
+These are original test iamges befor image processing.
 
-### Pipeline (single images)
+<img src='test_images/test1.jpg' width=300>
+<img src='test_images/test2.jpg' width=300>
+<img src='test_images/test3.jpg' width=300>
+<img src='test_images/test4.jpg' width=300>
+<img src='test_images/test5.jpg' width=300>
+<img src='test_images/test6.jpg' width=300>
+
+Firstly, I sharpen intensity of an image, because after sharpening images I can get clearer colour intensities in pixels. 
+
+- Sharpen Images (left is original imagrs, and right is the images after sharpening)
+<img src='output_images/Sharpen Images/report.jpeg' width=500>
+
+Next, I used colour transorms to detect lane lines which are normally long yellow line or white dotted line. For this, hsv, hls, Lab, colour spaces were applied.
 
 #### 1. Provide an example of a distortion-corrected image.
 
